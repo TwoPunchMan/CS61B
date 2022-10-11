@@ -109,18 +109,165 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
-
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
-
+        
+        /*
+            3
+            2
+            1
+            0 1 2 3
+         */
+        
+        board.setViewingPerspective(side);
+        int size = board.size();
+        for (int col = 0; col < size; col++) {
+            /* 1. move all number tiles one direction
+            [x,2,2,x] -> [2,2,x,x]
+             */
+            for (int row = size-1; row >= 0; row--) {
+                Tile tile = board.tile(col,row);
+                //don't bother with empty tiles
+                if (tile == null) {
+                    continue;
+                }
+                
+                // find out where tile is supposed to move
+                int tile_next_pos = 3;
+                while (tile_next_pos >= row) {
+                    if (board.tile(col, tile_next_pos) == null) {
+                        break;
+                    }
+                    tile_next_pos--;
+                }
+                
+                // move tile if needed
+                if (tile_next_pos >= row) {
+                    board.move(col, tile_next_pos, tile);
+                    changed = true;
+                }
+            }
+            
+            /* 2. handle merge logic
+            [2,2,x,x] -> [4,x,x,x]
+             */
+            for (int row = size-1; row >= 0; row--) {
+                Tile current_tile = board.tile(col, row);
+                int next_row_down = row - 1;
+                if (next_row_down < 0) {
+                    break;
+                }
+                Tile tile_adj = board.tile(col, next_row_down);
+                if (current_tile == null || tile_adj == null) {
+                    break;
+                }
+                
+                int current_tile_value = current_tile.value();
+                int tile_adj_value = tile_adj.value();
+                if (current_tile_value == tile_adj_value) {
+                    board.move(col, row, tile_adj);
+                    this.score += current_tile_value * 2;
+                    for (int p = next_row_down-1; p >= 0; p--) {
+                        Tile tile_third = board.tile(col, p);
+                        if (tile_third == null) {
+                            break;
+                        }
+                        
+                        if (p < size) {
+                            board.move(col, p+1, tile_third);
+                        }
+                    }
+                    changed = true;
+                }
+            }
+        }
+        /*
+        for (int i = 0; i < board.size(); i++) {            // col
+            boolean has_merged = false;
+            for (int j = 3; j >= 0; j--) {                  // row
+                // Starting from top -> down
+                Tile current_tile = board.tile(i, j);
+                
+                // Don't bother with blank tiles
+                if (current_tile != null) {
+                    // Get blank movable spaces without hitting a border/other tile
+                    // [x,2,x,x] -> 1
+                    // [x,x,2,x] -> 2
+                    int moves = get_num_blanks_before_tile(current_tile);
+    
+                    // Consider merge operation if adjacent cell has same value
+                    boolean is_merge_possible = can_handle_merge(current_tile, moves);
+    
+                    // handle merge logic for additional move+
+                    if (is_merge_possible && has_merged == false) {
+                        moves++;
+                        has_merged = true;
+                        // don't merge if already merged
+                    } else if (is_merge_possible && has_merged == true) {
+                        has_merged = false;
+                    }
+    
+                    // change if moved
+                    // add points if merged
+                    if (moves > 0) {
+                        boolean is_merge = board.move(i, j + moves, current_tile);
+                        if (is_merge) {
+                            this.score += current_tile.value() * 2;
+                        }
+                        changed = true;
+                    }
+                }
+            }
+        }
+        */
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
         }
+        
         return changed;
     }
+    
+    public int get_num_blanks_before_tile(Tile tile) {
+        int blank_moves = 0;
+        int tile_col = tile.col();
+        int tile_row = tile.row();
 
+        int j = tile_row + 1;
+        while (j <= 3) {
+            Tile tile_pointer_adj = board.tile(tile_col, j);
+            if (tile_pointer_adj == null) {
+                blank_moves++;
+            }
+            j++;
+        }
+        
+        return blank_moves;
+    }
+    
+    public boolean can_handle_merge(Tile tile, int blank_moves) {
+        int tile_col = tile.col();
+        int tile_row = tile.row();
+        int tile_adj_row = tile_row + blank_moves + 1;
+        
+        if (tile_adj_row > 3) {
+            return false;
+        }
+        
+        Tile tile_adj = board.tile(tile_col, tile_adj_row);
+        if (tile_adj == null) {
+            return false;
+        }
+        
+        if (tile_adj.value() == tile.value()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
      */
@@ -138,6 +285,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int board_size = b.size();
+        for (int i = 0; i < board_size; i++) {
+            for (int j = 0; j < board_size; j++) {
+                if (b.tile(i, j) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +303,17 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int board_size = b.size();
+        for (int i = 0; i < board_size; i++) {
+            for (int j = 0; j < board_size; j++) {
+                if (b.tile(i,j) == null) {
+                    // skip null tile
+                }
+                else if (b.tile(i, j).value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +325,41 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (b.tile(i,j) == null) {
+                    return true;
+                }
+                
+                int current_tile_value = b.tile(i,j).value();
+                int north = i - 1;
+                int east = j + 1;
+                int south = i + 1;
+                int west = j - 1;
+                
+                // adjacent tiles in bounds
+                if (north < b.size() && north >= 0) {
+                    if (b.tile(i,north) == null || current_tile_value == b.tile(north,j).value()) {
+                        return true;
+                    }
+                }
+                if (east < b.size() && east >= 0) {
+                    if (b.tile(i,east) == null || current_tile_value == b.tile(i,east).value()) {
+                        return true;
+                    }
+                }
+                if (south < b.size() && south >= 0) {
+                    if (b.tile(i,south) == null || current_tile_value == b.tile(south,j).value()) {
+                        return true;
+                    }
+                }
+                if (west < b.size() && west >= 0) {
+                    if (b.tile(i,west) == null || current_tile_value == b.tile(i, west).value()) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
