@@ -33,7 +33,7 @@ public class TimeAList {
 
         int interval = 1000;
         int i = 0;
-        final int N = 10000000;
+        final int N = 128000;
         
         while (i <= N) {
             array_list.addLast(i);
