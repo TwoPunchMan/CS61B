@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Iterable<T> {
 	private class Node {
 		public T value;
 		public Node next;
@@ -22,20 +22,17 @@ public class LinkedListDeque<T> {
 		this.sentinel = new Node(null);
 	}
 	
-	public LinkedListDeque(T value) {
-		this.size = 1;
-		this.sentinel = new Node(null);
-		
-		Node node = new Node(value);
-		this.sentinel.next = node;
-		this.sentinel.prev = node;
-		
-		node.prev = this.sentinel;
-		node.next = this.sentinel;
-	}
-	
 	public void addFirst(T item) {
 		Node new_head = new Node(item);
+		if (this.size() == 0) {
+			this.sentinel.prev = new_head;
+			this.sentinel.next = new_head;
+			new_head.next = this.sentinel;
+			new_head.prev = this.sentinel;
+			this.size++;
+			return;
+		}
+		
 		Node old_head = this.sentinel.next;
 		
 		new_head.next = old_head;
@@ -48,6 +45,15 @@ public class LinkedListDeque<T> {
 	
 	public void addLast(T item) {
 		Node new_tail = new Node(item);
+		if (this.size() == 0) {
+			this.sentinel.prev = new_tail;
+			this.sentinel.next = new_tail;
+			new_tail.next = this.sentinel;
+			new_tail.prev = this.sentinel;
+			this.size++;
+			return;
+		}
+		
 		Node old_tail = this.sentinel.prev;
 		
 		new_tail.prev = old_tail;
