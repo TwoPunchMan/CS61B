@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> {
+public class ArrayDeque<T> implements Iterable<T> {
 
 	private T[] items;
 	private int size;
@@ -19,28 +19,30 @@ public class ArrayDeque<T> {
 		this.start = point;
 	}
 	
-	public ArrayDeque(T item) {
-		this.size = 1;
-		this.items = (T[]) new Object[8];
-		int point = this.items.length / 2;
-		this.items[point] = item;
-		this.nextFirst = point - 1;
-		this.nextLast = point + 1;
-		this.start = point;
-	}
-	
 	public void addFirst(T item) {
 		if (this.items.length == this.size()) {
 			this.resize(this.items.length * 2);
 		}
 		
-		if (this.nextFirst < 0) {
-			this.nextFirst = this.items.length - 1;
+		if (this.size() == 0) {
+			this.items[this.nextFirst] = item;
+			this.nextLast++;
+			this.nextFirst--;
+			this.size++;
+			return;
 		}
 		
 		this.items[this.nextFirst] = item;
 		this.nextFirst--;
 		this.start--;
+		if (this.nextFirst < 0) {
+			this.nextFirst = this.items.length - 1;
+		}
+		
+		if (this.start < 0) {
+			this.start = this.items.length - 1;
+		}
+		
 		this.size++;
 	}
 	
@@ -49,16 +51,24 @@ public class ArrayDeque<T> {
 			this.resize(this.items.length * 2);
 		}
 		
-		if (this.nextLast > this.items.length - 1) {
-			this.nextLast = 0;
+		if (this.size() == 0) {
+			this.items[this.nextLast] = item;
+			this.nextLast++;
+			this.nextFirst--;
+			this.size++;
+			return;
 		}
 		
 		this.items[this.nextLast] = item;
 		this.nextLast++;
+		if (this.nextLast > this.items.length - 1) {
+			this.nextLast = 0;
+		}
+		
 		this.size++;
 	}
 	
-	public void resize(int capacity) {
+	private void resize(int capacity) {
 		T[] resized_array = (T[]) new Object[capacity];
 		int new_start_pt = resized_array.length / 2;
 		System.arraycopy(this.items, this.start, resized_array, new_start_pt, this.size);
@@ -93,41 +103,55 @@ public class ArrayDeque<T> {
 	public T removeFirst() {
 		if (this.isEmpty()) { return null; }
 		
-		T value = this.items[this.start];
-		this.items[this.start] = null;
-		this.nextFirst = this.start;
-		this.start++;
-		if (this.nextFirst > this.items.length - 1) {
-			this.nextFirst = 0;
+		int remove_index = this.start;
+		if (remove_index >= this.items.length) {
+			remove_index = 0;
+			this.start = 0;
 		}
+		
+		T value = this.items[remove_index];
+		this.items[remove_index] = null;
+		this.size--;
+		this.start++;
+		this.nextFirst = this.start - 1;
+		
+		if (this.isEmpty()) { this.resetStartPoint(); }
 		
 		double factor = this.size() / this.items.length;
 		if (factor < 0.25 && this.items.length >= 16) {
 			this.resize(this.items.length / 2);
 		}
 		
-		this.size--;
 		return value;
 	}
 	
 	public T removeLast() {
 		if (this.isEmpty()) { return null; }
 		
-		int remove_index = this.nextLast - 1;
+		this.nextLast--;
+		int remove_index = this.nextLast;
+		if (remove_index < 0) {
+			remove_index = this.items.length - 1;
+			this.nextLast = remove_index;
+		}
+		
 		T value = this.items[remove_index];
 		this.items[remove_index] = null;
-		this.nextLast++;
-		if (this.nextLast < 0) {
-			this.nextLast = this.items.length - 1;
-		}
+		this.size--;
+		if (this.isEmpty()) { this.resetStartPoint(); }
 		
 		double factor = this.size() / this.items.length;
 		if (factor < 0.25 && this.items.length >= 16) {
 			this.resize(this.items.length / 2);
 		}
 		
-		this.size--;
 		return value;
+	}
+	private void resetStartPoint() {
+		int point = this.items.length / 2;
+		this.nextFirst = point;
+		this.nextLast = point;
+		this.start = point;
 	}
 	
 	public T get(int index) {
