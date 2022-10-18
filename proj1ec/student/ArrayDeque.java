@@ -114,7 +114,6 @@ public class ArrayDeque<T> implements Iterable<T> {
 		this.size--;
 		this.start++;
 		this.nextFirst = this.start - 1;
-		
 		if (this.isEmpty()) { this.resetStartPoint(); }
 		
 		double factor = this.size() / this.items.length;
@@ -147,6 +146,7 @@ public class ArrayDeque<T> implements Iterable<T> {
 		
 		return value;
 	}
+	
 	private void resetStartPoint() {
 		int point = this.items.length / 2;
 		this.nextFirst = point;
