@@ -167,35 +167,5 @@ public class ArrayDeque<T> implements Iterable<T> {
 		T value = this.items[array_index];
 		return value;
 	}
-	
-	public Iterator<T> iterator() {
-		return new ArrayIterator(this.items);
-	}
-	
-	private class ArrayIterator implements Iterator<T> {
-		private int index;
-		private T[] array;
-		public ArrayIterator(T[] items) {
-			this.index = 0;
-			this.array = items;
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return this.array[this.index+1] != null;
-		}
-		
-		@Override
-		public T next() {
-			this.index++;
-			if (this.index > this.array.length - 1) {
-				this.index = 0;
-			}
-			return this.array[this.index];
-		}
-	}
-	
-	public boolean equals(Object o) {
-		return true;
-	}
+
 }

@@ -149,37 +149,4 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		return recursiveHelper(n.next, index-1);
 	}
 	
-	public Iterator<T> iterator() {
-		return new LLIterator(this.sentinel);
-	}
-	
-	private class LLIterator implements Iterator<T> {
-		private int index;
-		private Node pointer;
-		
-		public LLIterator(Node start) {
-			this.index = 0;
-			this.pointer = start;
-		}
-		
-		@Override
-		public boolean hasNext() {
-			if (this.pointer.next.value != null) {
-				return true;
-			}
-			return false;
-		}
-		
-		@Override
-		public T next() {
-			this.pointer = this.pointer.next;
-			this.index++;
-			return this.pointer.value;
-		}
-	}
-	
-	public boolean equals(Object o) {
-		
-		return true;
-	}
 }
