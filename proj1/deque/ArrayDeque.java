@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 	private T[] items;
 	private int size;
@@ -19,6 +19,7 @@ public class ArrayDeque<T> implements Iterable<T> {
 		this.start = point;
 	}
 	
+	@Override
 	public void addFirst(T item) {
 		if (this.items.length == this.size()) {
 			this.resize(this.items.length * 2);
@@ -46,6 +47,7 @@ public class ArrayDeque<T> implements Iterable<T> {
 		this.size++;
 	}
 	
+	@Override
 	public void addLast(T item) {
 		if (this.items.length == this.size()) {
 			this.resize(this.items.length * 2);
@@ -68,21 +70,30 @@ public class ArrayDeque<T> implements Iterable<T> {
 		this.size++;
 	}
 	
-	private void resize(int capacity) {
+	public void resize(int capacity) {
 		T[] resized_array = (T[]) new Object[capacity];
 		int new_start_pt = resized_array.length / 2;
-		System.arraycopy(this.items, this.start, resized_array, new_start_pt, this.size);
+		int old_start_pt = this.start;
+		for (int i = 0; i < this.size(); i++) {
+			if (old_start_pt >= this.size()) {
+				old_start_pt = 0;
+			}
+			resized_array[new_start_pt+i] = this.items[old_start_pt];
+			old_start_pt++;
+		}
+		
+		this.start = new_start_pt;
+		this.nextFirst = new_start_pt - 1;
+		this.nextLast = 0;
 		this.items = resized_array;
 	}
 	
-	public boolean isEmpty() {
-		return this.size == 0;
-	}
-	
+	@Override
 	public int size() {
 		return this.size;
 	}
 	
+	@Override
 	public void printDeque() {
 		int i = 0;
 		int j = this.start;
@@ -100,6 +111,7 @@ public class ArrayDeque<T> implements Iterable<T> {
 		}
 	}
 	
+	@Override
 	public T removeFirst() {
 		if (this.isEmpty()) { return null; }
 		
@@ -114,7 +126,6 @@ public class ArrayDeque<T> implements Iterable<T> {
 		this.size--;
 		this.start++;
 		this.nextFirst = this.start - 1;
-		
 		if (this.isEmpty()) { this.resetStartPoint(); }
 		
 		double factor = this.size() / this.items.length;
@@ -125,6 +136,7 @@ public class ArrayDeque<T> implements Iterable<T> {
 		return value;
 	}
 	
+	@Override
 	public T removeLast() {
 		if (this.isEmpty()) { return null; }
 		
@@ -147,13 +159,15 @@ public class ArrayDeque<T> implements Iterable<T> {
 		
 		return value;
 	}
-	private void resetStartPoint() {
+	
+	protected void resetStartPoint() {
 		int point = this.items.length / 2;
 		this.nextFirst = point;
 		this.nextLast = point;
 		this.start = point;
 	}
 	
+	@Override
 	public T get(int index) {
 		if (index < 0 || index > this.items.length - 1) {
 			return null;
@@ -169,33 +183,53 @@ public class ArrayDeque<T> implements Iterable<T> {
 	}
 	
 	public Iterator<T> iterator() {
-		return new ArrayIterator(this.items);
+		return new ArrayIterator();
 	}
 	
-	private class ArrayIterator implements Iterator<T> {
+	protected class ArrayIterator implements Iterator<T> {
 		private int index;
-		private T[] array;
-		public ArrayIterator(T[] items) {
-			this.index = 0;
-			this.array = items;
+		
+		public ArrayIterator() {
+			this.index = start;
 		}
 		
 		@Override
 		public boolean hasNext() {
-			return this.array[this.index+1] != null;
+			return items[this.index] != null;
 		}
 		
 		@Override
 		public T next() {
+			T value = items[this.index];
 			this.index++;
-			if (this.index > this.array.length - 1) {
+			if (this.index > items.length - 1) {
 				this.index = 0;
 			}
-			return this.array[this.index];
+			return value;
 		}
 	}
 	
 	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		
+		if (!(o instanceof ArrayDeque)) {
+			return false;
+		}
+		
+		ArrayDeque<T> A = (ArrayDeque<T>) o;
+		
+		if (A.size() != this.size()) {
+			return false;
+		}
+		
+		for (int i = 0; i < this.size(); i++) {
+			if (A.get(i) != this.get(i)) {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 }

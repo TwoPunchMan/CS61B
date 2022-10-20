@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T> {
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 	private class Node {
 		public T value;
 		public Node next;
@@ -22,6 +22,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		this.sentinel = new Node(null);
 	}
 	
+	@Override
 	public void addFirst(T item) {
 		Node new_head = new Node(item);
 		if (this.size() == 0) {
@@ -43,6 +44,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		this.size++;
 	}
 	
+	@Override
 	public void addLast(T item) {
 		Node new_tail = new Node(item);
 		if (this.size() == 0) {
@@ -64,14 +66,12 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		this.size++;
 	}
 	
-	public boolean isEmpty() {
-		return this.size == 0;
-	}
-	
+	@Override
 	public int size() {
 		return this.size;
 	}
 	
+	@Override
 	public void printDeque() {
 		Node p = this.sentinel;
 		while (p.next != this.sentinel) {
@@ -84,6 +84,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		}
 	}
 	
+	@Override
 	public T removeFirst() {
 		if (this.isEmpty()) {
 			return null;
@@ -100,6 +101,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		return node_rm_value;
 	}
 	
+	@Override
 	public T removeLast() {
 		if (this.isEmpty()) {
 			return null;
@@ -116,6 +118,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		return node_rm_value;
 	}
 	
+	@Override
 	public T get(int index) {
 		if (index < 0 || index > this.size-1) {
 			return null;
@@ -150,21 +153,19 @@ public class LinkedListDeque<T> implements Iterable<T> {
 	}
 	
 	public Iterator<T> iterator() {
-		return new LLIterator(this.sentinel);
+		return new LLIterator();
 	}
 	
 	private class LLIterator implements Iterator<T> {
-		private int index;
 		private Node pointer;
 		
-		public LLIterator(Node start) {
-			this.index = 0;
-			this.pointer = start;
+		public LLIterator() {
+			this.pointer = sentinel.next;
 		}
 		
 		@Override
 		public boolean hasNext() {
-			if (this.pointer.next.value != null) {
+			if (this.pointer != sentinel) {
 				return true;
 			}
 			return false;
@@ -172,13 +173,32 @@ public class LinkedListDeque<T> implements Iterable<T> {
 		
 		@Override
 		public T next() {
+			T value = this.pointer.value;
 			this.pointer = this.pointer.next;
-			this.index++;
-			return this.pointer.value;
+			return value;
 		}
 	}
 	
 	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		
+		if (!(o instanceof LinkedListDeque)) {
+			return false;
+		}
+		
+		LinkedListDeque<T> L = (LinkedListDeque<T>) o;
+		
+		if (L.size() != this.size()) {
+			return false;
+		}
+		
+		for (int i = 0; i < this.size(); i++) {
+			if (L.get(i) != this.get(i)) {
+				return false;
+			}
+		}
 		
 		return true;
 	}
