@@ -131,7 +131,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             this.resetStartPoint();
         }
 
-        double factor = this.size() / this.items.length;
+        double factor = (double) this.size() / this.items.length;
         if (factor < 0.25 && this.items.length >= 16) {
             this.resize(this.items.length / 2);
         }
@@ -159,7 +159,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             this.resetStartPoint();
         }
 
-        double factor = this.size() / this.items.length;
+        double factor = (double) this.size() / this.items.length;
         if (factor < 0.25 && this.items.length >= 16) {
             this.resize(this.items.length / 2);
         }
@@ -193,7 +193,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return new ArrayIterator();
     }
 
-    protected class ArrayIterator implements Iterator<T> {
+    private class ArrayIterator implements Iterator<T> {
         private int index;
 
         public ArrayIterator() {
@@ -225,7 +225,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
 
-        ArrayDeque<T> A = (ArrayDeque<T>) o;
+        ArrayDeque<T> A = (deque.ArrayDeque<T>) o;
 
         if (A.size() != this.size()) {
             return false;

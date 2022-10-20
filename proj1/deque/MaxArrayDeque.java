@@ -1,7 +1,6 @@
 package deque;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 public class MaxArrayDeque<T> extends ArrayDeque<T> {
 
@@ -28,12 +27,15 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         int i = 0;
         while (i < this.size()) {
             T item = this.arrayDeque.get(i);
+            if (item == null) {
+                return maxValue;
+            }
             int comp = this.comparator.compare(item, maxValue);
             if (comp >= 0) {
                 maxValue = item;
             }
 
-            i += 1;
+            i++;
         }
 
         return maxValue;
@@ -94,7 +96,9 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         return this.arrayDeque.iterator();
     }
 */
-    public boolean equals(Object o) {
+/*
+    @Override
+    private boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -117,4 +121,6 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
 
         return true;
     }
+    */
+
 }
