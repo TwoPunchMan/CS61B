@@ -2,13 +2,13 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Deque<T> {
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class Node {
         private T value;
         private Node next;
         private Node prev;
 
-        public Node(T value) {
+        private Node(T value) {
             this.value = value;
             this.next = null;
             this.prev = null;
@@ -85,9 +85,9 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public T removeFirst() {
-         if (this.isEmpty()) {
-             return null;
-         }
+        if (this.isEmpty()) {
+            return null;
+        }
 
         Node p = this.sentinel;
         p = p.next;
@@ -119,7 +119,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public T get(int index) {
-        if (index < 0 || index > this.size-1) {
+        if (index < 0 || index > this.size - 1) {
             return null;
         }
 
@@ -135,7 +135,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     public T getRecursive(int index) {
-        if (index < 0 || index > this.size-1) {
+        if (index < 0 || index > this.size - 1) {
             return null;
         }
 
@@ -143,12 +143,12 @@ public class LinkedListDeque<T> implements Deque<T> {
         return this.recursiveHelper(p.next, index);
     }
 
-    public T recursiveHelper(Node n, int index) {
+    private T recursiveHelper(Node n, int index) {
         if (index == 0) {
             return n.value;
         }
 
-        return recursiveHelper(n.next, index-1);
+        return recursiveHelper(n.next, index - 1);
     }
 
     public Iterator<T> iterator() {
@@ -158,7 +158,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     private class LLIterator implements Iterator<T> {
         private Node pointer;
 
-        public LLIterator() {
+        private LLIterator() {
             this.pointer = sentinel.next;
         }
 

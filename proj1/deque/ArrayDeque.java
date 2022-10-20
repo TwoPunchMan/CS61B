@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private T[] items;
     private int size;
     private int nextFirst;
@@ -69,7 +69,7 @@ public class ArrayDeque<T> implements Deque<T> {
         this.size++;
     }
 
-    public void resize(int capacity) {
+    private void resize(int capacity) {
         T[] resizedArray = (T[]) new Object[capacity];
         int newStartPt = resizedArray.length / 2;
         int oldStartPt = this.start;
@@ -77,8 +77,8 @@ public class ArrayDeque<T> implements Deque<T> {
             if (oldStartPt >= this.size()) {
                 oldStartPt = 0;
             }
-            resizedArray[newStartPt+i] = this.items[oldStartPt];
-            oldStartPt += 1;
+            resizedArray[newStartPt + i] = this.items[oldStartPt];
+            oldStartPt++;
         }
 
         this.start = newStartPt;
@@ -112,7 +112,9 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public T removeFirst() {
-        if (this.isEmpty()) { return null; }
+        if (this.isEmpty()) {
+            return null;
+        }
 
         int removeIndex = this.start;
         if (removeIndex >= this.items.length) {
@@ -125,7 +127,9 @@ public class ArrayDeque<T> implements Deque<T> {
         this.size--;
         this.start++;
         this.nextFirst = this.start - 1;
-        if (this.isEmpty()) { this.resetStartPoint(); }
+        if (this.isEmpty()) {
+            this.resetStartPoint();
+        }
 
         double factor = this.size() / this.items.length;
         if (factor < 0.25 && this.items.length >= 16) {
@@ -137,7 +141,9 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public T removeLast() {
-        if (this.isEmpty()) { return null; }
+        if (this.isEmpty()) {
+            return null;
+        }
 
         this.nextLast--;
         int removeIndex = this.nextLast;
@@ -149,7 +155,9 @@ public class ArrayDeque<T> implements Deque<T> {
         T value = this.items[removeIndex];
         this.items[removeIndex] = null;
         this.size--;
-        if (this.isEmpty()) { this.resetStartPoint(); }
+        if (this.isEmpty()) {
+            this.resetStartPoint();
+        }
 
         double factor = this.size() / this.items.length;
         if (factor < 0.25 && this.items.length >= 16) {
@@ -159,7 +167,7 @@ public class ArrayDeque<T> implements Deque<T> {
         return value;
     }
 
-    protected void resetStartPoint() {
+    private void resetStartPoint() {
         int point = this.items.length / 2;
         this.nextFirst = point;
         this.nextLast = point;

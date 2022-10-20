@@ -3,7 +3,7 @@ package deque;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class MaxArrayDeque<T> {
+public class MaxArrayDeque<T> extends ArrayDeque<T> {
 
     private ArrayDeque<T> arrayDeque;
     private Comparator<T> comparator;
@@ -23,12 +23,12 @@ public class MaxArrayDeque<T> {
         }
 
         T maxValue = this.arrayDeque.get(0);
-        Comparator<T> comparator = c;
+        this.comparator = c;
 
         int i = 0;
         while (i < this.size()) {
             T item = this.arrayDeque.get(i);
-            int comp = comparator.compare(item, maxValue);
+            int comp = this.comparator.compare(item, maxValue);
             if (comp >= 0) {
                 maxValue = item;
             }
@@ -38,51 +38,62 @@ public class MaxArrayDeque<T> {
 
         return maxValue;
     }
-
+/*
+    @Override
     public void addFirst(T item) {
         this.arrayDeque.addLast(item);
     }
 
+    @Override
     public void addLast(T item) {
         this.arrayDeque.addLast(item);
     }
 
-    private void resize(int capacity) {
+    @Override
+    public void resize(int capacity) {
         this.arrayDeque.resize(capacity);
     }
 
+    @Override
     public boolean isEmpty() {
         return this.arrayDeque.isEmpty();
     }
 
+    @Override
     public int size() {
         return this.arrayDeque.size();
     }
 
+    @Override
     public void printDeque() {
         this.arrayDeque.printDeque();
     }
 
+    @Override
     public T removeFirst() {
         return this.arrayDeque.removeFirst();
     }
 
+    @Override
     public T removeLast() {
         return this.arrayDeque.removeLast();
     }
 
-    private void resetStartPoint() {
+    @Override
+    public void resetStartPoint() {
         this.arrayDeque.resetStartPoint();
     }
 
+    @Override
     public T get(int index) {
         return this.arrayDeque.get(index);
     }
 
+    @Override
     public Iterator<T> iterator() {
         return this.arrayDeque.iterator();
     }
-
+*/
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -92,14 +103,14 @@ public class MaxArrayDeque<T> {
             return false;
         }
 
-        MaxArrayDeque<T> MAD = (MaxArrayDeque<T>) o;
+        MaxArrayDeque<T> M = (MaxArrayDeque<T>) o;
 
-        if (MAD.size() != this.size()) {
+        if (M.size() != this.size()) {
             return false;
         }
 
         for (int i = 0; i < this.size(); i++) {
-            if (MAD.get(i) != this.get(i)) {
+            if (M.get(i) != this.get(i)) {
                 return false;
             }
         }
