@@ -72,18 +72,16 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private void resize(int capacity) {
         T[] resizedArray = (T[]) new Object[capacity];
         int newStartPt = resizedArray.length / 2;
-        int oldStartPt = this.start;
         for (int i = 0; i < this.size(); i++) {
-            if (oldStartPt >= this.size()) {
-                oldStartPt = 0;
-            }
-            resizedArray[newStartPt + i] = this.items[oldStartPt];
-            oldStartPt++;
+            resizedArray[newStartPt + i] = this.get(i);
         }
 
         this.start = newStartPt;
         this.nextFirst = newStartPt - 1;
-        this.nextLast = 0;
+        this.nextLast = this.start + this.size();
+        if (this.nextLast >= resizedArray.length) {
+            this.nextLast = 0;
+        }
         this.items = resizedArray;
     }
 
@@ -196,7 +194,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private class ArrayIterator implements Iterator<T> {
         private int index;
 
-        public ArrayIterator() {
+        private ArrayIterator() {
             this.index = start;
         }
 
@@ -225,7 +223,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
 
-        ArrayDeque<T> A = (deque.ArrayDeque<T>) o;
+        Deque<T> A = (Deque<T>) o;
 
         if (A.size() != this.size()) {
             return false;
