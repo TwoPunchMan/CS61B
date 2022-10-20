@@ -164,10 +164,10 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
         @Override
         public boolean hasNext() {
-            if (this.pointer != sentinel) {
-                return true;
+            if (this.pointer == sentinel || this.pointer == null) {
+                return false;
             }
-            return false;
+            return true;
         }
 
         @Override
@@ -183,7 +183,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             return true;
         }
 
-        if (!(o instanceof LinkedListDeque)) {
+        if (!(o instanceof Deque)) {
             return false;
         }
 
