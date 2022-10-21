@@ -178,6 +178,17 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
+    private boolean contains(T item) {
+        for (int i = 0; i < this.size(); i++) {
+            T linkedListItem = this.get(i);
+            if (linkedListItem.equals(item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -187,14 +198,15 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
 
-        Deque<T> L = (Deque<T>) o;
+        Deque<T> D = (Deque<T>) o;
 
-        if (L.size() != this.size()) {
+        if (D.size() != this.size()) {
             return false;
         }
 
         for (int i = 0; i < this.size(); i++) {
-            if (L.get(i) != this.get(i)) {
+            T item = D.get(i);
+            if (!(this.contains(item))) {
                 return false;
             }
         }

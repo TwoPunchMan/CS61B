@@ -2,7 +2,6 @@ package gh2;
 
 // uncomment the following import once you're ready to start this portion
 import deque.ArrayDeque;
-import deque.LinkedListDeque;
 import deque.Deque;
 // maybe more imports
 
@@ -43,8 +42,9 @@ public class GuitarString {
         //      other. This does not mean that you need to check that the numbers
         //      are different from each other. It means you should repeatedly call
         //      Math.random() - 0.5 to generate new random numbers for each array index.
-        double r = Math.random() - 0.5;
+
         for (int i = 0; i < this.buffer.size(); i++) {
+            double r = Math.random() - 0.5;
             this.buffer.removeFirst();
             this.buffer.addLast(r);
         }
@@ -58,20 +58,15 @@ public class GuitarString {
         // the average of the two multiplied by the DECAY factor.
         // **Do not call StdAudio.play().**
 
-        int j = 0;
-        while (j < this.buffer.size() - 1) {
-            double first = this.buffer.removeFirst();
-            double second = this.buffer.get(0);
-            double newDouble = this.DECAY * 0.5 * (first + second);
-            this.buffer.addLast(newDouble);
-            j++;
-        }
+        double first = this.buffer.removeFirst();
+        double second = this.buffer.get(0);
+        double newDouble = this.DECAY * 0.5 * (first + second);
+        this.buffer.addLast(newDouble);
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
         // Return the correct thing.
-        int lastIndex = this.buffer.size() - 1;
-        return this.buffer.get(lastIndex);
+        return this.buffer.get(0);
     }
 }

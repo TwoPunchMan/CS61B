@@ -214,6 +214,16 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
+    private boolean contains(T item) {
+        for (int i = 0; i < this.size(); i++) {
+            T arrayItem = this.get(i);
+            if (arrayItem.equals(item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -223,14 +233,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
 
-        Deque<T> A = (Deque<T>) o;
+        Deque<T> D = (Deque<T>) o;
 
-        if (A.size() != this.size()) {
+        if (D.size() != this.size()) {
             return false;
         }
 
         for (int i = 0; i < this.size(); i++) {
-            if (A.get(i) != this.get(i)) {
+            T item = D.get(i);
+            if (!(this.contains(item))) {
                 return false;
             }
         }
