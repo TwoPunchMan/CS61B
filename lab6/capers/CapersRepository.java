@@ -52,7 +52,6 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         File storyFile = new File("./capers/story/story.txt");
-        String savedStory = Utils.readContentsAsString(storyFile);
 
         if (!storyFile.exists()) {
             try {
@@ -62,7 +61,10 @@ public class CapersRepository {
             }
         }
 
+        String savedStory = Utils.readContentsAsString(storyFile);
         Utils.writeContents(storyFile, savedStory, text, "\n");
+        String story = Utils.readContentsAsString(storyFile);
+        System.out.println(story);
     }
 
     /**
@@ -77,13 +79,12 @@ public class CapersRepository {
         if (!dogFile.exists()) {
             try {
                 dogFile.createNewFile();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        Utils.writeObject(dogFile, newDog);
+        newDog.saveDog();
         System.out.println(newDog.toString());
     }
 
@@ -94,6 +95,8 @@ public class CapersRepository {
      * @param name String name of the Dog whose birthday we're celebrating.
      */
     public static void celebrateBirthday(String name) {
-        // TODO
+        Dog dog = Dog.fromFile(name);
+        dog.haveBirthday();
+        dog.saveDog();
     }
 }
