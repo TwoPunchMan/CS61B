@@ -60,8 +60,8 @@ public class Main {
             break;
         case "birthday":
             validateNumArgs("birthday", args, 2);
-            String dogName = args[1];
-            CapersRepository.celebrateBirthday(dogName);
+            name = args[1];
+            CapersRepository.celebrateBirthday(name);
             break;
         default:
             exitWithError(String.format("Unknown command: %s", args[0]));

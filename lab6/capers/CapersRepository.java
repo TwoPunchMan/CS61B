@@ -32,17 +32,8 @@ public class CapersRepository {
     public static void setupPersistence() {
         File dogDir = Utils.join(CAPERS_FOLDER, "dogs");
         File storyDir = Utils.join(CAPERS_FOLDER, "story");
-        File[] fileDirNames = {dogDir, storyDir};
-
-        try {
-            for (File dir : fileDirNames) {
-                if (!dir.exists()) {
-                    dir.mkdir();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dogDir.mkdir();
+        storyDir.mkdir();
     }
 
     /**
@@ -51,20 +42,18 @@ public class CapersRepository {
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        File storyFile = new File("./capers/story/story.txt");
+        File storyFile = new File("./capers/story/story");
+        String content;
 
         if (!storyFile.exists()) {
-            try {
-                storyFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            content = text;
+        } else {
+            String savedStory = Utils.readContentsAsString(storyFile);
+            content = savedStory + "\n" + text;
         }
 
-        String savedStory = Utils.readContentsAsString(storyFile);
-        Utils.writeContents(storyFile, savedStory, text, "\n");
-        String story = Utils.readContentsAsString(storyFile);
-        System.out.println(story);
+        Utils.writeContents(storyFile, content);
+        System.out.println(content);
     }
 
     /**
@@ -74,16 +63,6 @@ public class CapersRepository {
      */
     public static void makeDog(String name, String breed, int age) {
         Dog newDog = new Dog(name, breed, age);
-        File dogFile = new File("./capers/dogs/" + name + ".txt");
-
-        if (!dogFile.exists()) {
-            try {
-                dogFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         newDog.saveDog();
         System.out.println(newDog.toString());
     }

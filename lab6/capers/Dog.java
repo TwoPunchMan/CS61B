@@ -38,14 +38,8 @@ public class Dog implements Serializable {
      * @return Dog read from file
      */
     public static Dog fromFile(String name) {
-        Dog dog = null;
-        File dogFile = Utils.join(DOG_FOLDER, name.concat(".txt"));
-        boolean f = dogFile.exists();
-        if (dogFile.exists()) {
-            dog = Utils.readObject(dogFile, Dog.class);
-        }
-
-        return dog;
+        File dogFile = Utils.join(DOG_FOLDER, name);
+        return Utils.readObject(dogFile, Dog.class);
     }
 
     /**
@@ -61,15 +55,7 @@ public class Dog implements Serializable {
      * Saves a dog to a file for future use.
      */
     public void saveDog() {
-        File dogFile = Utils.join(DOG_FOLDER, this.name.concat(".txt"));
-        if (!dogFile.exists()) {
-            try {
-                dogFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
+        File dogFile = Utils.join(DOG_FOLDER, this.name);
         Utils.writeObject(dogFile, this);
     }
 
