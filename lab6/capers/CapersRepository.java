@@ -18,8 +18,7 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
-                                            //      function in Utils
+    static final File CAPERS_FOLDER = Utils.join(CWD, "capers");
 
     /**
      * Does required filesystem operations to allow for persistence.
@@ -31,7 +30,19 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
+        File dogDir = Utils.join(CAPERS_FOLDER, "dogs");
+        File storyDir = Utils.join(CAPERS_FOLDER, "story");
+        File[] fileDirNames = {dogDir, storyDir};
+
+        try {
+            for (File dir : fileDirNames) {
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -40,7 +51,18 @@ public class CapersRepository {
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        // TODO
+        File storyFile = new File("./capers/story/story.txt");
+        String savedStory = Utils.readContentsAsString(storyFile);
+
+        if (!storyFile.exists()) {
+            try {
+                storyFile.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Utils.writeContents(storyFile, savedStory, text, "\n");
     }
 
     /**
@@ -49,7 +71,20 @@ public class CapersRepository {
      * Also prints out the dog's information using toString().
      */
     public static void makeDog(String name, String breed, int age) {
-        // TODO
+        Dog newDog = new Dog(name, breed, age);
+        File dogFile = new File("./capers/dogs/" + name + ".txt");
+
+        if (!dogFile.exists()) {
+            try {
+                dogFile.createNewFile();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Utils.writeObject(dogFile, newDog);
+        System.out.println(newDog.toString());
     }
 
     /**
